@@ -1,3 +1,19 @@
+# Airflow
+logs/
+*.pid
+airflow.cfg
+unittests.cfg
+
+# Docker
+*.tar
+
+
+# VSCode
+.vscode/
+
+# Général
+*.log
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[codz]
