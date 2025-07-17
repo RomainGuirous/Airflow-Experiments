@@ -15,7 +15,9 @@ services:
       - mysql-db-volume:/var/lib/mysql
 
   airflow-webserver:
-    image: apache/airflow:2.7.1
+    build:
+      context: .
+      dockerfile: Dockerfile
     depends_on:
       - mysql
     environment:
@@ -37,7 +39,9 @@ services:
     restart: always
 
   airflow-scheduler:
-    image: apache/airflow:2.7.1
+    build:
+      context: .
+      dockerfile: Dockerfile
     depends_on:
       - mysql
       - airflow-webserver
@@ -63,11 +67,12 @@ volumes:
 #Etape 0 : créer un fichier .env à la racine du projet avec les variables d'environnement (et le fichier docker-compose.yml)
 
 #Etape1 : lancer ensuite la commande suivante pour démarrer les services
-# docker compose up -d
+# docker compose up --build -d
 
 # docker compose up: permet de démarrer les services définis dans le fichier docker-compose.yml.
 # par défaut recherche le fichier docker-compose.yml, pour changer faire ceci :
 # docker compose -f mon_fichier.yml up -d
+# --build : permet de reconstruire les images si nécessaire. (en cherchant les Dockerfile dans le dossier courant)
 # -d :signifie détaché, ça lance les containers en arrière-plan.
 
 # Etape 2 : créer la base de données Airflow et les tables nécessaires en exécutant la commande suivante :
@@ -88,11 +93,11 @@ volumes:
 
 # Etape 4 : on relance les services pour appliquer les changements et démarrer Airflow :
 # docker compose down
-# docker compose up -d
+# docker compose up --build -d
 
 # CES COMMANDES NE SONT A FAIRE QU'UNE SEULE FOIS, POUR INITIALISER AIRFLOW.
 # ENSUITE, POUR LANCER AIRFLOW, IL SUFFIT DE FAIRE :
-# docker compose up -d
+# docker compose up --build -d
 
 # RESUME:
 # * création .env et docker-compose.yml
@@ -102,6 +107,14 @@ volumes:
 # * docker compose down
 # * docker compose up -d
 
+#Etape 5: création administrateur Airflow
+# docker compose run --rm airflow-webserver airflow users create \
+#     --username admin \
+#     --firstname Firstname \
+#     --lastname Lastname \
+#     --role Admin \
+#     --email example@email.com \
+#     --password admin
 
 #Etape fin : pour accéder à l'interface web d'Airflow, ouvrez votre navigateur et allez à l'adresse:
 # http://localhost:8080
@@ -122,5 +135,9 @@ volumes:
 # docker exec: permet d'exécuter une commande dans un conteneur en cours d'exécution.
 # -it: permet d'ouvrir un terminal interactif dans le conteneur.
 # airflow-experiments-mysql-1: c'est le nom du conteneur MySQL, il peut varier selon votre configuration.
+# bash: c'est le shell que vous voulez utiliser dans le conteneur.
+# mysql -u airflow -p: cette commande vous connecte à MySQL en tant qu'utilisateur airflow. Vous devrez entrer le mot de passe défini dans votre fichier .env.
+# bash: c'est le shell que vous voulez utiliser dans le conteneur.
+# mysql -u airflow -p: cette commande vous connecte à MySQL en tant qu'utilisateur airflow. Vous devrez entrer le mot de passe défini dans votre fichier .env.
 # bash: c'est le shell que vous voulez utiliser dans le conteneur.
 # mysql -u airflow -p: cette commande vous connecte à MySQL en tant qu'utilisateur airflow. Vous devrez entrer le mot de passe défini dans votre fichier .env.
