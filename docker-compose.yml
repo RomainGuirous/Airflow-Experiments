@@ -10,7 +10,7 @@ services:
       MYSQL_PASSWORD: ${MYSQL_PASSWORD}
       MYSQL_DATABASE: ${MYSQL_DATABASE}
     ports:
-      - "3306:3306"
+      - "3307:3306" # changed: map host port 3307 -> container port 3306
     volumes:
       - mysql-db-volume:/var/lib/mysql
 
